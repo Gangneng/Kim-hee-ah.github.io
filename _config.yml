@@ -18,9 +18,9 @@ plainwhite:
 
   # generate social links in footer
   social_links:
-    instagram: https://www.instagram.com/bbuing98/
-    github:  https://github.com/Kim-hee-ah/
-    linkedIn: https://www.linkedin.com/in/hee-ah-kim-15638b1a5/
+    instagram: bbuing98    
+    github:  Kim-hee-ah
+    linkedIn: hee-ah-kim-15638b1a5
     rss: rss
     # dribbble: jekyll
     # facebook: jekyll
