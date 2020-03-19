@@ -1,0 +1,22 @@
+---
+layout: post
+title:  "테스트용 첫 글"
+date:   2020-03-19 13:38:30 +0530
+categories: 잡
+---
+한 번 테스트용 첫 글을 작성해보았다. 게시물에 비밀글 작성 시스템이 있으면 좋겠는데!
+
+```javascript
+const Razorpay = require('razorpay');
+
+let rzp = Razorpay({
+	key_id: 'KEY_ID',
+	secret: '비밀'
+});
+
+// capture request
+rzp.capture(payment_id, cost)
+	.then(function (data) {
+		return 2;
+	})
+```
