@@ -1,0 +1,484 @@
+---
+layout: post
+title:  "광인사 - 자연어 처리"
+date:   2020-07-14~16 
+categories: python3
+---
+자연어 처리
+====
+정규표현식
+----
+**기본 메타 문자**
+* [] : 문자 (안에 - 쓰면 범위, ^은 not)
+* . : 모든 문자(줄바꿈 제외, 공백 포함)
+* \* : 0부터 반복
+* \+ : 1부터 반복
+* {m,n} : 횟수 지정 (m, n 중 하나만 있어도 된다.)
+* ? : 있어도 되고, 없어도 되고.
+* | : or
+* ^ : 시작
+* $ : 끝
+
+**re 모듈**
+* match() : 문자열 처음부터 매치
+* search() : 문자열 전체 매치
+* findall() : 매치된 것을 문자열 리스트로 반환
+* finditer() : 매치된 것을 각각 match로 반환
+---
+*실습1*
+
+['abbbbba', 'cddb', 'aerb', 'aeeeb', 'almnj']일 때 1, 3번째만 True를 리턴하는 정규표현식을 작성하시오.
+
+-> 1번째 문자열과 3번째 문자열만이 a와 b사이 문자 두 개를 포함하고 있다.
+
+
+```python
+import re
+
+data = ['abbbbba','cddb','aerb','aeeeb','almnj']
+p = re.compile('a..b')
+for i in data:
+    if p.match(i):
+        print(True)
+    else:
+        print(False)
+```
+결과=>
+
+<p>True
+<p>False
+<p>True
+<p>False
+<p>False
+
+---
+* group() : 매치된 문자열 전부 / 일부
+* start() : 매치된 문자열 시작 인덱스
+* end() : 매치된 문자열 끝 인덱스
+* span() : 매치된 문자열 (시작, 끝) 튜플
+
+**compile 옵션(실습에선 안 씀)**
+* DOTALL(S) : .에 줄바꿈 포함
+* IGNORECASE(I) : 대소문자 무시
+* MULTILINE(M) : 여러 줄 매치 (^, $ 시)
+* VERBOSE(X) : 주석 작성 가능
+
+**문자 클래스**
+* \d : 숫자
+* \D : not 숫자
+* \s : 공백 (탭, 스페이스, 줄바꿈 포함)
+* \S : not 공백
+* \w : 문자 + 숫자
+* \W : not 문자 + 숫자
+* \b : 문자와 공백 사이 문자
+* \B : not 문자와 공백 사이 문자
+* \A : 문자열 처음 (multiline 무시)
+* \Z : 문자열 끝 (multiline 무시)
+* \\\ : r을 앞에다가 써야함
+---
+*실습2*
+
+['abcd efghopqr-stuv', 'abcd-efgh', 'abc defghijk', 'ab cdhijk'] 1, 3, 4번째만 match되도록 정규표현식을 작성하시오.
+
+-> 문자들 사이에 공백이 있다.
+```python
+import re
+
+data = ['abcd efghopqr-stuv', 'abcd-efgh', 'abc defghijk', 'ab cdhijk']
+p = re.compile('.+\s.+')
+for i in data:
+    print(p.match(i))
+```
+결과=> 
+
+<re.Match object; span=(0, 18), match='abcd efghopqr-stuv'>
+None
+<re.Match object; span=(0, 12), match='abc defghijk'>
+<re.Match object; span=(0, 9), match='ab cdhijk'>
+
+---
+**그루핑**
+
+()하면 그룹이 되고 이후에 .group(n)으로 뽑을 수 있다.
+
+내부에서 \1\2로 재참조도 가능
+
+ex)
+```python
+data = 'I love you'
+p = re.compile('(\w\s)(.+\s)(.+)')
+match = p.match(data)
+
+print(p.sub('\\2\\3\\1', data))
+```
+결과 => 
+
+love youI
+
+
+() 안에 ?P<name> 을 넣어서 그룹에 이름을 붙일 수도 있다.
+
+**(?) 구문**
+
+() 안 ?는 백슬래시 같은 느낌이다.
+
+* (?P<이름>) : 이름을 지정하겠다.
+* (?=특정문자) : 특정문자 바로 앞까지만 매치하겠다.
+* (?!특정문자) : 특정문자가 아닌 경우에만 통과
+---
+*실습3*
+
+그룹을 사용해서 ['코끼리는 코끼리', '강아지는 강아지', '고양이는 고양이'] 모두에게 True를 리턴하는 정규표현식을 작성하고, 주어들을 순서대로 출력하세요.
+
+```python
+import re
+data = ['코끼리는 코끼리', '강아지는 강아지', '고양이는 고양이']
+p = re.compile('(.{3})')
+
+for i in data:
+    match = p.match(i)
+    if match:
+        print(True)
+        print(match.group(1))
+    else:
+        print(False)
+```
+결과 =>
+
+<p>True
+<p>코끼리
+<p>True
+<p>강아지
+<p>True
+<p>고양이
+
+---
+**매치된 것을 바꾸고 싶을 때**
+
+.sub('바뀐 뒤 문자', '바꿀 대상')
+
+.subn도 비슷하다. 그러나 얘는 바뀐 횟수까지도 출력한다.
+
+바뀐 뒤의 문자에는 \g를 넣어 그룹을 넣어줄 수도 있고, 함수를 넣어줄 수도 있다.
+---
+*실습4*
+
+['김준태 - 학점 2.0', '이재화 - 학점 3.0', '최주원 - 학점 4.0']에서 학점을 모두 4.5로 바꿔주세요!
+```python
+import re
+
+data = ['김준태 - 학점 2.0', '이재화 - 학점 3.0', '최주원 - 학점 4.0']
+
+p = re.compile('(.+)(\d.\d)')
+
+for i in data:
+    print(p.sub('\\1 4.5',i))
+```
+결과 =>
+
+<p>김준태 - 학점  4.5
+<p>이재화 - 학점  4.5
+<p>최주원 - 학점  4.5
+
+---
+?는 최소한의 반복이다. 전체가 아닌 하나만 바꾸고 싶을 때 사용한다는 것이다.
+```python
+import re
+
+a = '(안녕)하세(요)'
+p = re.compile('\(.+?\)') #괄호 자체는 특수 문자이기 때문에 앞에 \를 붙여주어야 한다
+ 
+print(p.match(a))
+```
+---
+*실습5*
+ 
+<div id="u_skip"> <a href="#newsstand"><span>뉴스스탠드 바로가기</span></a> <a href="#themecast"><span>주제별캐스트 바로가기</span></a> <a href="#timesquare"><span>타임스퀘어 바로가기</span></a> <a href="#shopcast"><span>쇼핑캐스트 바로가기</span></a> <a href="#account"><span>로그인 바로가기</span></a> </div> 에서 사용된 모든 태그(<>)를 출력하세요. 
+
+```python
+import re
+
+a = '<div id="u_skip"> <a href="#newsstand"><span>뉴스스탠드 바로가기</span></a> <a href="#themecast"><span>주제별캐스트 바로가기</span></a> <a href="#timesquare"><span>타임스퀘어 바로가기</span></a> <a href="#shopcast"><span>쇼핑캐스트 바로가기</span></a> <a href="#account"><span>로그인 바로가기</span></a> </div>'
+p = re.compile('<.*?>')
+
+print(p.findall(a))
+```
+결과=>
+```python
+['<div id="u_skip">', '<a href="#newsstand">', '<span>', '</span>', '</a>', '<a href="#themecast">', '<span>', '</span>', '</a>', '<a href="#timesquare">', '<span>', '</span>', '</a>', '<a href="#shopcast">', '<span>', '</span>', '</a>', '<a href="#account">', '<span>', '</span>', '</a>', '</div>']
+```
+---
+*실습6*
+'1100+1200+1300+1800=5400' 이라는 문장에서 등호표시 전의 숫자만 8진법으로 변경하세요.
+
+```python
+import re
+
+data = '1100+1200+1300+1800=5400'
+
+p = re.compile('1\d{3}')
+print(p.sub(lambda m : oct(int(m.group())),data))
+```
+```python
+import re
+
+def octa(m):
+    a = int(m.group())
+    return oct(a)
+
+data = '1100+1200+1300+1800=5400'
+
+p = re.compile('1\d{3}')
+print(p.sub(octa,data))
+```
+---
+*실습7*
+['https://naver.com', 'https://korea.ac.kr', 'https://www.google.com', 'google.com', 'https://facebook.com', 'naver.com'] 에서 https로 시작하고, www.이 없고, 마지막이 .com으로 끝나는 주소만 True를 리턴하는 정규표현식을 작성하세요.
+```python
+import re
+
+data = ['https://naver.com', 'https://korea.ac.kr', 'https://www.google.com', 'google.com', 'https://facebook.com', 'naver.com'] 
+
+p = re.compile('https...[^www]\D+.com')
+
+for i in data:
+    print(p.match(i))
+```
+결과 =>
+
+<re.Match object; span=(0, 17), match='https://naver.com'>
+None
+None
+None
+<re.Match object; span=(0, 20), match='https://facebook.com'>
+
+.+를 하게 되면 그 뒤에 어떤 문자가 오든 매치를 하게끔 하여 [^dd]와 같은 것들이 의미가 없어지게 된다.
+
+---
+*실습8*
+
+a = '''mike 010-1234-0907 mikeman@naver.com hi! my name is mike! jay 010-1112-3456 jayman@naver.com hi! my name is jay! yohan 010-2223-5874 yohanman@naver.com hi! my name is yohan! ''' 위 문장에서 순서 배치를 전화번호, 이메일, 자기소개, 이름 순서로 변경하시오.
+```python
+import re
+
+data ='''mike 010-1234-0907 mikeman@naver.com hi! my name is mike!
+jay 010-1112-3456 jayman@naver.com hi! my name is jay!
+yohan 010-2223-5874 yohanman@naver.com hi! my name is yohan!
+'''
+p = re.compile(r'(?P<name>.+)\s(?P<phone>\d+.\d+.\d+)\s(?P<mail>.+.com)\s(?P<intro>.+\1!)\n')
+
+print(p.sub('\g<phone> \g<mail> \g<intro> \g<name> \\n', data))
+```
+결과 =>
+
+010-1234-0907 mikeman@naver.com hi! my name is mike! mike 
+
+010-1112-3456 jayman@naver.com hi! my name is jay! jay 
+
+010-2223-5874 yohanman@naver.com hi! my name is yohan! yohan 
+
+<h2>Tokenizer
+---
+토큰화란?
+
+문장이 있을 때 단어/어절 등으로 나누는 것.
+
+**가장 기본적인 형태**
+
+구두점이 있는 부분은 합쳐서 토큰화해준다. (.,'와 같은 것들)
+
+('만 붙어 토큰되는 듯...)
+
+```python 
+from nltk.tokenize import word_tokenize
+
+text = "hi, my name is heeah. Today's weather is good."
+
+word_tokenize(text)
+```
+결과 =>
+
+['I', "'m", 'heeah', '.', 'What', "'s", 'your', 'name', '?']
+
+**n't와 같은 부분 n,',t로 따로 두는 모듈**
+
+```python
+from nltk.tokenize import WordPunctTokenizer
+
+text = "I'm heeah. What's your name?"
+
+WordPunctTokenizer().tokenize(text)
+```
+결과 =>
+
+['I', "'", 'm', 'heeah', '.', 'What', "'", 's', 'your', 'name', '?']
+
+**가장 표준화 된 모델**
+
+하이픈은 유지하고, '는 분리
+```python
+from nltk.tokenize import TreebankWordTokenizer
+
+text = "I'm hee-ah. What's your name?"
+
+TreebankWordTokenizer().tokenize(text)
+```
+결과 =>
+
+['I', "'m", 'hee-ah.', 'What', "'s", 'your', 'name', '?']
+
+**정규표현식을 사용할 수 있는 토크나이저**
+```python
+from nltk.tokenize import RegexpTokenizer
+
+text = "I'm heeah. What's your name?"
+RegexpTokenizer('\w+').tokenize(text)
+```
+결과 =>
+
+['I', 'm', 'heeah', 'What', 's', 'your', 'name']
+
+**문장 토큰화(문장별로 나눠 리스트화)**
+```python
+from nltk.tokenize import sent_tokenize
+
+text = "I'm heeah. What's your name?"
+sent_tokenize(text)
+```
+결과 =>
+
+["I'm heeah.", "What's your name?"]
+
+**-ing나 복수형 원래 단어 찾기**
+
+stem을 통해 어간만 추출 가능.
+어간 = 단어의 의미를 담는 부분
+
+```python
+from nltk.tokenize import word_tokenize
+
+from nltk.stem import PorterStemmer
+from nltk.stem import LancasterStemmer
+
+text = "Loving you~ We plays harder!"
+
+words = word_tokenize(text)
+for word in words:
+    print(PorterStemmer().stem(word))
+for word in words:    
+    print(LancasterStemmer().stem(word))
+```
+
+결과=>
+
+<p>love
+<p>you~
+<p>We
+<p>play
+<p>harder
+<p>!
+<p>lov
+<p>you~
+<p>we
+<p>play
+<p>hard
+<p>!
+
+**불용어**
+
+I, is, not, an 등은 문장에서 의미를 구성하는 데 큰 역할을 하지 않는다.
+
+```python
+from nltk.tokenize import WordPunctTokenizer
+
+from nltk.corpus import stopwords
+
+sw = stopwords.words('english')
+
+text = "Loving you~ We plays harder!"
+
+words = WordPunctTokenizer().tokenize(text)
+for word in words:
+    if word.lower() in sw:
+        words.remove(word)
+    
+print(words)
+```
+결과 =>
+
+['Loving', '~', 'plays', 'harder', '!']
+
+**빈도수대로 인덱스 부여하기**
+```python
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from collections import Counter
+
+text = """In a nursing home, resident Duke reads a romance story to an old woman who has senile dementia with memory loss. 
+In the late 1930s, wealthy seventeen year-old Allie Hamilton is spending summer vacation in Seabrook. 
+Local worker Noah Calhoun meets Allie at a carnival and they soon fall in love with each other. 
+One day, Noah brings Allie to an ancient house that he dreams of buying and restoring and they attempt to make love but get interrupted by their friend. 
+Allie's parents do not approve of their romance since Noah belongs to another social class, and they move to New York with her. 
+Noah writes 365 letters (A Year) to Allie, but her mother Anne Hamilton does not deliver them to her daughter. 
+Three years later, the United States joins the World War II and Noah and his best friend Fin enlist in the army, and Allie works as an army nurse. 
+She meets injured soldier Lon Hammond in the hospital. After the war, they meet each other again going on dates and then, Lon, who is wealthy and ..."""
+
+words=word_tokenize(text)
+sw=['.',',']
+
+for word in words:
+    if word.lower() in sw:
+        words.remove(word)
+    
+count_list=Counter(words)
+common_count_list=count_list.most_common(10))
+
+print(common_count_list)
+```
+결과 =>
+
+
+[('and', 9), ('to', 7), ('the', 6), ('Allie', 6), ('Noah', 5), ('in', 4), ('they', 4), ('a', 3), ('an', 3), ('with', 3)]
+
+**원-핫인코딩**
+
+딕셔너리형으로 데이터 저장
+
+```python
+common_dict={}
+
+i=0
+for (key,_) in common_cl:
+    common_dict[key]=i
+    i+=1
+    
+print(common_dict)
+```
+원 핫 인코딩
+
+```python
+oh_vector_list = []
+
+for value in common_dict.values():
+    oh_vector = [0]*len(common_dict)
+    oh_vector[value]=1
+    oh_vector_list.append(oh_vector)
+
+print(oh_vector_list)
+```
+결과 =>
+
+[[1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]]
+
+**워드 클라우드**
+```python
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+word_wc = WordCloud(background_color='white')
+plt.imshow(word_wc.generate_from_frequencies(count_list))
+plt.show()
+```
+결과 =>
+
+![wordcloudResult](wordCloud_result.PNG)
