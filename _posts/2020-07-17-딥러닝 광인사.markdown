@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "광인사 - 딥러닝"
+date:   2020-07-17 09:00:00 +0530 
+categories: python3
+---
+<h1>인공지능</h1>
+
+<h2>H-index</h2>
+
+---
