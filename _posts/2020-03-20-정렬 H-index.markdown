@@ -4,7 +4,7 @@ title:  "프로그래머스 - 정렬 - H-index"
 date:   2020-03-20 15:15:00 +0530
 categories: python3
 ---
-<h1>정렬</h1>
+<h2>정렬</h2>
 
 <h2>H-index</h2>
 

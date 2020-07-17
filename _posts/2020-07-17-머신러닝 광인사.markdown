@@ -4,7 +4,7 @@ title:  "광인사 - 머신 러닝"
 date:   2020-07-17 12:30:00 +0530
 categories: python3
 ---
-<h1>머신 러닝</h1>
+<h2>머신 러닝</h2>
 <h2>scikit-learn</h2>
 
 ----
@@ -13,6 +13,7 @@ categories: python3
 * 학습 샘플 데이터 제공
 **XOR 연산 학습하기**
 ```python
+
 from sklearn import svm
 xor_input=[
     [0,0,0],
@@ -51,6 +52,7 @@ print("정답률:",ok,"/",total,"=",ok/total)
 정답률: 4 / 4 = 1.0
 
 코드 간략화
+
 ```python
 import pandas as pd
 from sklearn import svm, metrics

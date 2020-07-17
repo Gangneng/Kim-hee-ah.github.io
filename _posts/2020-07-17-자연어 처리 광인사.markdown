@@ -4,10 +4,11 @@ title:  "광인사 - 자연어 처리"
 date:   2020-07-17 09:00:00 +0530 
 categories: python3
 ---
-<h1>자연어 처리</h1>
+<h2>자연어 처리</h2>
 <h2>정규표현식</h2>
 
 ----
+
 **기본 메타 문자**
 * [] : 문자 (안에 - 쓰면 범위, ^은 not)
 * . : 모든 문자(줄바꿈 제외, 공백 포함)
@@ -24,7 +25,9 @@ categories: python3
 * search() : 문자열 전체 매치
 * findall() : 매치된 것을 문자열 리스트로 반환
 * finditer() : 매치된 것을 각각 match로 반환
+
 ---
+
 *실습1*
 
 ['abbbbba', 'cddb', 'aerb', 'aeeeb', 'almnj']일 때 1, 3번째만 True를 리턴하는 정규표현식을 작성하시오.
@@ -52,6 +55,7 @@ for i in data:
 <p>False
 
 ---
+
 * group() : 매치된 문자열 전부 / 일부
 * start() : 매치된 문자열 시작 인덱스
 * end() : 매치된 문자열 끝 인덱스
@@ -75,12 +79,15 @@ for i in data:
 * \A : 문자열 처음 (multiline 무시)
 * \Z : 문자열 끝 (multiline 무시)
 * \\\ : r을 앞에다가 써야함
+
 ---
+
 *실습2*
 
 ['abcd efghopqr-stuv', 'abcd-efgh', 'abc defghijk', 'ab cdhijk'] 1, 3, 4번째만 match되도록 정규표현식을 작성하시오.
 
 -> 문자들 사이에 공백이 있다.
+
 ```python
 import re
 
@@ -97,6 +104,7 @@ None
 <re.Match object; span=(0, 9), match='ab cdhijk'>
 
 ---
+
 **그루핑**
 
 ()하면 그룹이 되고 이후에 .group(n)으로 뽑을 수 있다.
@@ -104,6 +112,7 @@ None
 내부에서 \1\2로 재참조도 가능
 
 ex)
+
 ```python
 data = 'I love you'
 p = re.compile('(\w\s)(.+\s)(.+)')
@@ -125,7 +134,9 @@ love youI
 * (?P<이름>) : 이름을 지정하겠다.
 * (?=특정문자) : 특정문자 바로 앞까지만 매치하겠다.
 * (?!특정문자) : 특정문자가 아닌 경우에만 통과
+
 ---
+
 *실습3*
 
 그룹을 사용해서 ['코끼리는 코끼리', '강아지는 강아지', '고양이는 고양이'] 모두에게 True를 리턴하는 정규표현식을 작성하고, 주어들을 순서대로 출력하세요.
@@ -153,6 +164,7 @@ for i in data:
 <p>고양이
 
 ---
+
 **매치된 것을 바꾸고 싶을 때**
 
 .sub('바뀐 뒤 문자', '바꿀 대상')
@@ -160,10 +172,13 @@ for i in data:
 .subn도 비슷하다. 그러나 얘는 바뀐 횟수까지도 출력한다.
 
 바뀐 뒤의 문자에는 \g를 넣어 그룹을 넣어줄 수도 있고, 함수를 넣어줄 수도 있다.
+
 ---
+
 *실습4*
 
 ['김준태 - 학점 2.0', '이재화 - 학점 3.0', '최주원 - 학점 4.0']에서 학점을 모두 4.5로 바꿔주세요!
+
 ```python
 import re
 
@@ -181,7 +196,9 @@ for i in data:
 <p>최주원 - 학점  4.5
 
 ---
+
 ?는 최소한의 반복이다. 전체가 아닌 하나만 바꾸고 싶을 때 사용한다는 것이다.
+
 ```python
 import re
 
@@ -190,7 +207,9 @@ p = re.compile('\(.+?\)') #괄호 자체는 특수 문자이기 때문에 앞에
  
 print(p.match(a))
 ```
+
 ---
+
 *실습5*
  
 <div id="u_skip"> <a href="#newsstand"><span>뉴스스탠드 바로가기</span></a> <a href="#themecast"><span>주제별캐스트 바로가기</span></a> <a href="#timesquare"><span>타임스퀘어 바로가기</span></a> <a href="#shopcast"><span>쇼핑캐스트 바로가기</span></a> <a href="#account"><span>로그인 바로가기</span></a> </div> 에서 사용된 모든 태그(<>)를 출력하세요. 
@@ -204,10 +223,13 @@ p = re.compile('<.*?>')
 print(p.findall(a))
 ```
 결과=>
+
 ```python
 ['<div id="u_skip">', '<a href="#newsstand">', '<span>', '</span>', '</a>', '<a href="#themecast">', '<span>', '</span>', '</a>', '<a href="#timesquare">', '<span>', '</span>', '</a>', '<a href="#shopcast">', '<span>', '</span>', '</a>', '<a href="#account">', '<span>', '</span>', '</a>', '</div>']
 ```
+
 ---
+
 *실습6*
 '1100+1200+1300+1800=5400' 이라는 문장에서 등호표시 전의 숫자만 8진법으로 변경하세요.
 
@@ -219,6 +241,7 @@ data = '1100+1200+1300+1800=5400'
 p = re.compile('1\d{3}')
 print(p.sub(lambda m : oct(int(m.group())),data))
 ```
+
 ```python
 import re
 
@@ -231,9 +254,12 @@ data = '1100+1200+1300+1800=5400'
 p = re.compile('1\d{3}')
 print(p.sub(octa,data))
 ```
+
 ---
+
 *실습7*
 ['https://naver.com', 'https://korea.ac.kr', 'https://www.google.com', 'google.com', 'https://facebook.com', 'naver.com'] 에서 https로 시작하고, www.이 없고, 마지막이 .com으로 끝나는 주소만 True를 리턴하는 정규표현식을 작성하세요.
+
 ```python
 import re
 
@@ -255,9 +281,11 @@ None
 .+를 하게 되면 그 뒤에 어떤 문자가 오든 매치를 하게끔 하여 [^dd]와 같은 것들이 의미가 없어지게 된다.
 
 ---
+
 *실습8*
 
 a = '''mike 010-1234-0907 mikeman@naver.com hi! my name is mike! jay 010-1112-3456 jayman@naver.com hi! my name is jay! yohan 010-2223-5874 yohanman@naver.com hi! my name is yohan! ''' 위 문장에서 순서 배치를 전화번호, 이메일, 자기소개, 이름 순서로 변경하시오.
+
 ```python
 import re
 
@@ -278,7 +306,9 @@ print(p.sub('\g<phone> \g<mail> \g<intro> \g<name> \\n', data))
 010-2223-5874 yohanman@naver.com hi! my name is yohan! yohan 
 
 <h2>Tokenizer
+
 ---
+
 토큰화란?
 
 문장이 있을 때 단어/어절 등으로 나누는 것.
@@ -316,6 +346,7 @@ WordPunctTokenizer().tokenize(text)
 **가장 표준화 된 모델**
 
 하이픈은 유지하고, '는 분리
+
 ```python
 from nltk.tokenize import TreebankWordTokenizer
 
@@ -328,6 +359,7 @@ TreebankWordTokenizer().tokenize(text)
 ['I', "'m", 'hee-ah.', 'What', "'s", 'your', 'name', '?']
 
 **정규표현식을 사용할 수 있는 토크나이저**
+
 ```python
 from nltk.tokenize import RegexpTokenizer
 
@@ -339,6 +371,7 @@ RegexpTokenizer('\w+').tokenize(text)
 ['I', 'm', 'heeah', 'What', 's', 'your', 'name']
 
 **문장 토큰화(문장별로 나눠 리스트화)**
+
 ```python
 from nltk.tokenize import sent_tokenize
 
@@ -409,6 +442,7 @@ print(words)
 ['Loving', '~', 'plays', 'harder', '!']
 
 **빈도수대로 인덱스 부여하기**
+
 ```python
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -471,6 +505,7 @@ print(oh_vector_list)
 [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]]
 
 **워드 클라우드**
+
 ```python
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
