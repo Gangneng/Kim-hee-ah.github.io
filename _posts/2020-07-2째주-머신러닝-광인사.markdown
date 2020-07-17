@@ -1,0 +1,141 @@
+---
+layout: post
+title:  "광인사 - 머신 러닝"
+date:   2020-07-17 12:30:00 +0530
+categories: python3
+---
+머신 러닝
+===
+scikit-learn
+----
+* 파이썬 머신러닝 프레임워크 라이브러리
+* 회귀, 분류, 군집, 차원축소, 특성공학, 전처리, 교차검증, 파이프라인 등 머신러닝에 필요한 기능 제공
+* 학습 샘플 데이터 제공
+**XOR 연산 학습하기**
+```python
+from sklearn import svm
+xor_input=[
+    [0,0,0],
+    [0,1,1],
+    [1,0,1],
+    [1,1,0]
+]
+
+xor_data = [] #문제
+xor_label = []
+#답
+for row in xor_input:
+    p=row[0]
+    q=row[1]
+    r=row[2]
+    xor_data.append([p,q])
+    xor_label.append(r)
+
+#데이터 학습
+model = svm.SVC()
+model.fit(xor_data, xor_label)
+
+#데이터 예측
+pre = model.predict(xor_data)
+
+#결과 확인하기
+ok = 0; total = 0
+for idx, answer in enumerate(xor_label):
+    p = pre[idx]
+    if p == answer : ok+=1
+    total+=1
+print("정답률:",ok,"/",total,"=",ok/total)
+```
+결과 =>
+
+정답률: 4 / 4 = 1.0
+
+코드 간략화
+```python
+import pandas as pd
+from sklearn import svm, metrics
+
+# XOR 연산
+xor_input = [
+    [0, 0, 0],
+    [0, 1, 1],
+    [1, 0, 1],
+    [1, 1, 0]
+]
+
+xor_df = pd.DataFrame(xor_input)
+xor_data = xor_df[[0,1]]
+xor_label = xor_df[2]
+
+model = svm.SVC()
+model.fit(xor_data, xor_label)
+pre = model.predict(xor_data)
+
+ac_score = metrics.accuracy_score(xor_label, pre)
+print("정답률 = ", ac_score)
+```
+<a href ="https://developers.google.com/machine-learning/glossary
+">머신러닝 용어집</a>
+
+**모델 저장과 불러오기**
+
+모델 저장
+
+```python
+import pickle
+
+with open('xor_model.pkl','wb') as f:
+pickle.dump(clf, f)
+```
+
+모델 불러오기
+
+```python
+import pickle
+
+with open('xor_model.pkl','rb') as f:
+model = pickle.load(f)
+
+x_text=[[1,1]]
+
+y_predict = model.predict(x_test)
+print(y_predict)
+```
+결과 => [0]
+
+**모델 저장과 불러오기**
+
+모델 저장
+
+```python
+from sklearn.externals import joblib
+
+joblib.dump(clf, 'xor_model_2.pkl')
+```
+
+불러오기
+
+```python
+from sklearn.externals import joblib
+
+model = joblib.load('xor_model_2.pkl')
+
+x_test = [
+    [1, 1]
+]
+
+y_predict = model.predict(x_test)
+print(y_predict[0])
+```
+결과 => 0
+
+<h2>지도학습 - K-Nearest Neighbors(KNN)</h2>
+
+---
+
+* 새로운 데이터 포인트와 가장 가까운 훈련 데이터 세트의 데이터 포인트를 찾아 예측
+* k값에 따라 가까운 이웃 수 결정
+* 입력 값과 k개 가까운 점이 있다고 가정할 때 그 점들이 어떤 라벨과 가장 비슷한지 판단하는 알고리즘
+* 매개 변수 : 데이터 포인트 사이 거리를 재는 방법 (일반적으로 유클리디안 거리 이용)
+* k값이 작을수록 모델 복잡도 상대적으로 증가
+* k값이 클수록 모델의 복잡도가 낮아짐.
